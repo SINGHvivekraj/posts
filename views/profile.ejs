@@ -16,13 +16,20 @@
     <div class="postsContainer">
       <div class="post">
         <% curr_user.posts.reverse().forEach((post)=>{ %>
-        <h4><%= post.user %></h4>
+        <h4><%= curr_user.name %></h4>
         <p>
           <%= post.content %>
         </p>
+        <p><%= post.likes.length%> likes</p>
         <div class="btns">
-          <a>Like</a>
-          <a>Edit</a>
+          <a href="/like/<%= post._id%>">
+            <%if(post.likes.indexOf(curr_user._id)===-1){ %>
+                Like 
+            <%}else{ %>
+                Dislike 
+            <%} %>
+            </a>
+          <a href="/edit/<%= post._id%>">Edit</a>
         </div>
 
         <% }) %>
