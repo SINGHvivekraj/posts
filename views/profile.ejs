@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h4>Hi <%= curr_user.name %></h4>
+    <form action="/createpost" method="post">
+      <textarea name="content" placeholder="Whats on your mind ?"></textarea>
+      <button>Create Post</button>
+    </form>
+    <hr />
+    <h4>your posts</h4>
+    <div class="postsContainer">
+      <div class="post">
+        <% curr_user.posts.reverse().forEach((post)=>{ %>
+        <h4><%= post.user %></h4>
+        <p>
+          <%= post.content %>
+        </p>
+        <div class="btns">
+          <a>Like</a>
+          <a>Edit</a>
+        </div>
+
+        <% }) %>
+      </div>
+      
+    </div>
+  </body>
+</html>

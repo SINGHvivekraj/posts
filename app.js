@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const userModel = require("./models/user");
+const postModel=require("./models/post")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -27,9 +28,9 @@ app.post("/register", (req, res) => {
         age,
       });
 
-      const token = jwt.sign({ email, userid: usercreated._id }, "raazzz");
+      const token = jwt.sign({ email, userid: usercreated._id,name:usercreated.name }, "raazzz");
       res.cookie("tokenregister", token);
-      res.send("registered successfully!");
+      res.redirect("/login");
     });
   });
 });
@@ -47,9 +48,9 @@ app.post("/login", async (req, res) => {
   bcrypt.compare(password, user.password, (err, result) => {
     if (!result) res.redirect("/login");
 
-    const token = jwt.sign({ email, userid: user._id }, "raazzz");
+    const token = jwt.sign({ email, userid: user._id ,name:user.name }, "raazzz");
     res.cookie("tokenlogin", token);
-    res.send("Logged In Successfully");
+    res.redirect("/profile");
   });
 });
 
@@ -62,14 +63,27 @@ app.get("/tokensfind", (req, res) => {
   res.send(req.cookies);
 });
 
-app.get("/profile", isLoggedIn, (req, res) => {
-  console.log(req.user);
-  res.send("Profile Page");
+app.get("/profile", isLoggedIn,async (req, res) => {
+  //console.log(req.user);
+  let user=await userModel.findOne({email:req.user.email}).populate('posts');
+  res.render("profile",{curr_user:user});
+});
+
+app.post("/createpost", isLoggedIn, async (req, res) => {
+  let user=await userModel.findOne({email:req.user.email});
+  let post=await postModel.create({
+    user:user._id,
+    content:req.body.content
+  });
+
+  user.posts.push(post._id);
+  await user.save();
+  res.redirect('/profile');
 });
 
 //protected routes using a middleware
 function isLoggedIn(req, res, next) {
-  if (req.cookies.tokenlogin === "") res.send("you must be logged in");
+  if (req.cookies.tokenlogin === "") res.redirect("/login");
   else {
     let data = jwt.verify(req.cookies.tokenlogin, "raazzz");
     req.user = data;
