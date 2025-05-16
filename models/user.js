@@ -5,6 +5,11 @@ const userSchema=mongoose.Schema({
     name:String,
     email:String,
     password:String,
+    profilepic:{
+        type:String,
+        default:"images.jpg"
+       
+    },
     age:Number,
     posts:[
         {

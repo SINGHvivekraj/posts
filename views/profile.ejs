@@ -4,8 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
+    <div class="h-10 w-10 bg-red-500 rounded-md">
+      <img class="w-full h-full object-cover" src="/images/uploads/<%= curr_user.profilepic %>" >
+    </div>
     <h4>Hi <%= curr_user.name %></h4>
     <form action="/createpost" method="post">
       <textarea name="content" placeholder="Whats on your mind ?"></textarea>

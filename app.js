@@ -7,11 +7,12 @@ app.use(express.urlencoded({ extended: true }));
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-
+app.use(express.static('public'));
 const userModel = require("./models/user");
 const postModel=require("./models/post")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const upload=require('./config/multerconfig');
 
 app.get("/", (req, res) => {
   res.render("index");
@@ -104,6 +105,18 @@ app.post('/editpost/:id',async (req,res)=>{
   await post.save();
   res.redirect('/profile');
 })
+
+app.get('/profile/upload',(req,res)=>{
+  res.render('profileupload');
+})
+
+app.post('/upload',isLoggedIn,upload.single("image"),async (req,res)=>{
+  console.log(req.file);
+  let user=await userModel.findOne({email:req.user.email});
+  user.profilepic=req.file.filename;
+  await user.save();
+  res.redirect("/profile");
+});
 
 
 //protected routes using a middleware
